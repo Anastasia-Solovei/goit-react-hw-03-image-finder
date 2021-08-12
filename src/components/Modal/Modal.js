@@ -29,13 +29,10 @@ class Modal extends Component {
 
   render() {
     const { handleOverlayClick } = this;
-    const { modalImgUrl } = this.props;
 
     return createPortal(
       <div className={s.Overlay} onClick={handleOverlayClick}>
-        <div className={s.Modal}>
-          <img src={modalImgUrl} alt="" />
-        </div>
+        <div className={s.Modal}>{this.props.children}</div>
       </div>,
       modalRoot,
     );
@@ -43,7 +40,6 @@ class Modal extends Component {
 }
 
 Modal.propTypes = {
-  modalImgUrl: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 

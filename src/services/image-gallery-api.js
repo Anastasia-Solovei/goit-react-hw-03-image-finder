@@ -3,8 +3,8 @@ import axios from 'axios';
 const API_KEY = '22025483-02f71c6158d17e06d5b927dc1';
 const BASE_URL = 'https://pixabay.com/api/';
 
-function fetchImages(query) {
-  axios.defaults.baseURL = `${BASE_URL}?q=${query}`;
+function fetchImages(query, page) {
+  axios.defaults.baseURL = `${BASE_URL}?q=${query}&page=${page}`;
   axios.defaults.params = {
     key: API_KEY,
     image_type: 'photo',
@@ -24,4 +24,5 @@ function fetchImages(query) {
 const imageGalleryApi = {
   fetchImages,
 };
+
 export default imageGalleryApi;

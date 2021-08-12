@@ -7,7 +7,7 @@ const QueryError = ({ queryError }) => {
 };
 
 QueryError.propTypes = {
-  queryError: PropTypes.string,
+  queryError: PropTypes.object,
 };
 
 export default QueryError;

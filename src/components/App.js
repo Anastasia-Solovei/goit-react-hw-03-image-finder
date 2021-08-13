@@ -3,7 +3,7 @@ import { ToastContainer } from 'react-toastify';
 import imageGalleryApi from '../services/image-gallery-api';
 
 import Searchbar from './Searchbar';
-import ImgGallery from './ImgGallery';
+import ImageGallery from './ImageGallery';
 import GalleryLoader from './GalleryLoader';
 import QueryError from './QueryError';
 import Modal from './Modal';
@@ -30,11 +30,11 @@ class App extends Component {
 
       const { query, page } = this.state;
 
-      this.getImages(query, page);
+      this.handleFetchImages(query, page);
     }
   }
 
-  getImages = (query, page) => {
+  handleFetchImages = (query, page) => {
     imageGalleryApi
       .fetchImages(query, page)
       .then(({ hits }) => {
@@ -82,10 +82,8 @@ class App extends Component {
   };
 
   handleLoadMore = () => {
-    console.log(this.state.page);
-
     const { query, page } = this.state;
-    this.getImages(query, page);
+    this.handleFetchImages(query, page);
   };
 
   handleScrollDown = () => {
@@ -131,7 +129,7 @@ class App extends Component {
       return (
         <>
           <Searchbar onSubmit={formSubmitHandler} />
-          <ImgGallery images={images} onClick={handleOpenModal} />
+          <ImageGallery images={images} onClick={handleOpenModal} />
           {showModal && (
             <Modal onClose={handleCloseModal}>
               <img src={modalImgUrl} alt="" />

@@ -6,6 +6,8 @@ import ImageGalleryItem from '../ImageGalleryItem';
 import s from './ImageGallery.module.css';
 
 const ImageGallery = ({ images, onClick }) => {
+  console.log(images);
+
   return (
     <ul className={s.ImageGallery}>
       {images.map(image => {

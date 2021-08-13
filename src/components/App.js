@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { ToastContainer } from 'react-toastify';
-import imageGalleryApi from '../services/image-gallery-api';
+//import imageGalleryApi from '../services/image-gallery-api';
+import { connect } from 'react-redux';
+import { getGalleryItems } from '../redux/operations';
 
+import { galleryItems } from '../redux/selectors';
 import Searchbar from './Searchbar';
 import ImageGallery from './ImageGallery';
 import GalleryLoader from './GalleryLoader';
@@ -21,46 +24,53 @@ class App extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
+    console.log(this.state.page);
     if (prevState.query !== this.state.query) {
-      this.setState({
-        status: 'pending',
-        page: 1,
-        images: [],
-      });
+      this.props.getGalleryItems(this.state.query, this.state.page);
 
-      const { query, page } = this.state;
+      // this.setState({
+      //   status: 'pending',
+      //   page: 1,
+      //   images: [],
+      // });
 
-      this.handleFetchImages(query, page);
+      // const { query, page } = this.state;
+
+      // this.handleFetchImages(query, page);
+    }
+
+    if (prevState.page !== this.state.page) {
+      this.props.getGalleryItems(this.state.query, this.state.page);
     }
   }
 
-  handleFetchImages = (query, page) => {
-    imageGalleryApi
-      .fetchImages(query, page)
-      .then(({ hits }) => {
-        if (hits.length < 12) {
-          this.setState({
-            showLoadMore: false,
-          });
-        }
+  // handleFetchImages = (query, page) => {
 
-        this.setState(prevState => ({
-          images: [...prevState.images, ...hits],
-          status: 'resolved',
-          page: prevState.page + 1,
-          showLoadMore: true,
-        }));
-      })
-      .catch(error =>
-        this.setState({
-          error,
-          status: 'rejected',
-        }),
-      )
-      .finally(() => {
-        this.handleScrollDown();
-      });
-  };
+  //   // imageGalleryApi
+  //   //   .fetchImages(query, page)
+  //   //   .then(({ hits }) => {
+  //   //     if (hits.length < 12) {
+  //   //       this.setState({
+  //   //         showLoadMore: false,
+  //   //       });
+  //   //     }
+  //   //     this.setState(prevState => ({
+  //   //       images: [...prevState.images, ...hits],
+  //   //       status: 'resolved',
+  //   //       page: prevState.page + 1,
+  //   //       showLoadMore: true,
+  //   //     }));
+  //   //   })
+  //   //   .catch(error =>
+  //   //     this.setState({
+  //   //       error,
+  //   //       status: 'rejected',
+  //   //     }),
+  //   //   )
+  //   //   .finally(() => {
+  //   //     this.handleScrollDown();
+  //   //   });
+  // };
 
   formSubmitHandler = inputValue => {
     this.setState({ query: inputValue });
@@ -82,8 +92,10 @@ class App extends Component {
   };
 
   handleLoadMore = () => {
-    const { query, page } = this.state;
-    this.handleFetchImages(query, page);
+    this.setState(prevState => {
+      return { page: prevState.page + 1 };
+    });
+    // this.handleFetchImages(query, page);
   };
 
   handleScrollDown = () => {
@@ -94,53 +106,42 @@ class App extends Component {
   };
 
   render() {
-    const { images, status, error, showModal, modalImgUrl } = this.state;
+    const {
+      // images,
+      status,
+      error,
+      showModal,
+      modalImgUrl,
+    } = this.state;
     const { formSubmitHandler, handleOpenModal, handleCloseModal } = this;
+    const { images } = this.props;
 
-    if (status === 'idle') {
-      return (
-        <>
-          <Searchbar onSubmit={formSubmitHandler} />
-          <ToastContainer autoClose={3000} />
-        </>
-      );
-    }
+    return (
+      <>
+        <Searchbar onSubmit={formSubmitHandler} />
+        <ToastContainer autoClose={3000} />
+        {!ImageGallery && <GalleryLoader />}
+        {/* <QueryError queryError={error} /> */}
+        {images.length > 0 && (
+          <>
+            <ImageGallery images={images} onClick={handleOpenModal} />
+            <Button onClick={this.handleLoadMore} />
+          </>
+        )}
 
-    if (status === 'pending') {
-      return (
-        <>
-          <Searchbar onSubmit={formSubmitHandler} />
-          <GalleryLoader />;
-        </>
-      );
-    }
-
-    if (status === 'rejected') {
-      return (
-        <>
-          <Searchbar onSubmit={formSubmitHandler} />
-          <QueryError queryError={error} />
-          <ToastContainer autoClose={3000} />
-        </>
-      );
-    }
-
-    if (status === 'resolved') {
-      return (
-        <>
-          <Searchbar onSubmit={formSubmitHandler} />
-          <ImageGallery images={images} onClick={handleOpenModal} />
-          {showModal && (
-            <Modal onClose={handleCloseModal}>
-              <img src={modalImgUrl} alt="" />
-            </Modal>
-          )}
-          <Button onClick={this.handleLoadMore} />
-          <ToastContainer autoClose={3000} />
-        </>
-      );
-    }
+        {showModal && (
+          <Modal onClose={handleCloseModal}>
+            <img src={modalImgUrl} alt="" />
+          </Modal>
+        )}
+      </>
+    );
   }
 }
 
-export default App;
+const mapStateToProps = store => {
+  return { images: galleryItems(store) };
+};
+const mapDispatchToProps = { getGalleryItems };
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

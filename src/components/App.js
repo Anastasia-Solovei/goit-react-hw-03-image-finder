@@ -18,6 +18,7 @@ class App extends Component {
     showLoadMore: false,
     showModal: false,
     error: null,
+    modalImgUrl: '',
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -66,11 +67,9 @@ class App extends Component {
     this.setState({ query: inputValue });
   };
 
-  handleOpenModal = e => {
-    const modalImgUrl = e.target.dataset.src;
-
+  handleOpenModal = largeImageURL => {
     this.setState({
-      modalImgUrl: modalImgUrl,
+      modalImgUrl: largeImageURL,
       showModal: true,
     });
   };

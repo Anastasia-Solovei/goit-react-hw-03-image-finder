@@ -109,7 +109,7 @@ class App extends Component {
       return (
         <>
           <Searchbar onSubmit={formSubmitHandler} />
-          <GalleryLoader />;
+          <GalleryLoader />
         </>
       );
     }

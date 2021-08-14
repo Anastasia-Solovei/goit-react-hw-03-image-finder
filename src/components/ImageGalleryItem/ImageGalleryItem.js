@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import s from './ImageGalleryItem.module.css';
 
 class ImageGalleryItem extends Component {
-  onImageGalleryItemClick = () => {
+  onClick = () => {
     this.props.onClick(this.props.image.largeImageURL);
   };
 
@@ -12,13 +12,15 @@ class ImageGalleryItem extends Component {
       image: { webformatURL, tags },
     } = this.props;
 
+    const { onClick } = this;
+
     return (
       <li className={s.ImageGalleryItem}>
         <img
           src={webformatURL}
           alt={tags}
           className={s.ImageGalleryItemImage}
-          onClick={this.onImageGalleryItemClick}
+          onClick={onClick}
         ></img>
       </li>
     );

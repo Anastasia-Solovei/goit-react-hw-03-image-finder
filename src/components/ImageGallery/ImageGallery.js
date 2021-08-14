@@ -1,33 +1,21 @@
-import { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import ImageGalleryItem from '../ImageGalleryItem';
 
 import s from './ImageGallery.module.css';
 
-class ImageGallery extends Component {
-  onImageGalleryItemClick = largeImageURL => {
-    this.props.onClick(largeImageURL);
-  };
-
-  render() {
-    const { images } = this.props;
-
-    return (
-      <ul className={s.ImageGallery}>
-        {images.map(image => {
-          return (
-            <ImageGalleryItem
-              key={image.id}
-              image={image}
-              onClick={this.onImageGalleryItemClick}
-            />
-          );
-        })}
-      </ul>
-    );
-  }
-}
+const ImageGallery = ({ images, onClick }) => {
+  return (
+    <ul className={s.ImageGallery}>
+      {images.map(image => {
+        return (
+          <ImageGalleryItem key={image.id} image={image} onClick={onClick} />
+        );
+      })}
+    </ul>
+  );
+};
 
 ImageGallery.propTypes = {
   images: PropTypes.arrayOf(PropTypes.shape),
